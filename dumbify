@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Directory paths for storing APKs and backups
+APK_DIR="apks"
+
+# Ensure directories exist
+mkdir -p $APK_DIR
+
+# List of package names to backup and uninstall
+APPS=(
+    "org.mozilla.fennec_fdroid"
+    "org.chromium.chrome"
+    "org.fdroid.fdroid"
+    # "com.android.vending" Had no luck with this
+    "org.schabi.newpipe"
+    # Add more package names as needed
+)
+
+for app in "${APPS[@]}"; do
+    # Extract APK
+    APK_PATH=$(adb shell pm path $app | sed 's/package://')
+    adb pull $APK_PATH $APK_DIR/$app.apk
+
+    # Check if the APK file exists in the APK_DIR
+    if [[ -f $APK_DIR/$app.apk ]]; then
+        # Uninstall the app only if the APK was found/generated
+        adb shell pm uninstall -k --user 0 $app
+        echo "Processed $app"
+    else
+        echo "Failed to extract APK for $app. Skipped uninstallation."
+    fi
+done
+
+echo "Backup, extraction, and uninstallation completed."

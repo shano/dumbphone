@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Directory paths where APKs are stored
+APK_DIR="apks"
+
+# List of package names to reinstall and restore
+APPS=(
+    "org.mozilla.fennec_fdroid"
+    "org.chromium.chrome"
+    "org.fdroid.fdroid"
+    # "com.android.vending" Had no luck with this
+    "org.schabi.newpipe"
+    # Add more package names as needed
+)
+
+for app in "${APPS[@]}"; do
+    # Install the APK
+    adb install "$APK_DIR/$app.apk"
+    echo "Processed $app"
+done
+
+echo "Reinstallation and restoration completed."
+
